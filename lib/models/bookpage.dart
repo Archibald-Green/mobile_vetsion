@@ -2,7 +2,7 @@ import 'package:mobileapp/models/books.dart';
 
 import 'item.dart';
 
-class Page {
+class BookPage {
   int id;
   Books book;
   String title;
@@ -12,7 +12,7 @@ class Page {
   List<Item> items ;
   
 
-  Page({
+  BookPage({
     required this.id,
     required this.book,
     required this.title,
@@ -21,7 +21,7 @@ class Page {
     required this.items,
   });
 
-  factory Page.fromJson(Map<String, dynamic> json) {
+  factory BookPage.fromJson(Map<String, dynamic> json) {
     Books book = Books.fromJson(json['book']);
 
     List<Item> items = [];
@@ -32,13 +32,13 @@ class Page {
       items.add(item);
     },);
 
-    return Page(
+    return BookPage(
     
-      id: json['id'],
-      book: book ,
-      title: json['title'],
-      body: json['body'],
-      coverart: json['cover_art'],
+      id: json['id'] ?? 0,
+      book: book,
+      title: json['title'] ?? '',
+      body: json['body'] ?? '',
+      coverart: json['cover_art'] ?? '',
       items: items,
      
     );

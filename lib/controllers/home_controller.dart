@@ -79,18 +79,24 @@ class HomeController {
   }
 
 
-  Future<Books> getPage(int page) async{
-    dynamic result = await bookListApi(page);
-    Books pageId = Books.fromJson(result);
-    return pageId;
+  Future<BookPage> getPage(int bookID) async{
+    List<dynamic> result = await bookListApi(bookID);
+    print("QQQQQQQQQQQQQQQQQQQQQQQQQ:   ${result}");
+    List<BookPage> pages = [];
+    result.forEach((element) {
+      BookPage page = BookPage.fromJson(element);
+      pages.add(page);
+    });
+    
+    return pages.first;
   }
 
-  Future<List<Page>> getPages() async{
-  List<Page> allPage = [];
+  Future<List<BookPage>> getPages() async{
+  List<BookPage> allPage = [];
   try {
     List<dynamic> result = await pagesListApi();
     result.forEach((element) {
-      allPage.add(Page.fromJson(element));
+      allPage.add(BookPage.fromJson(element));
     });
   } catch (e) {
     print("Error while fetching pages: $e");

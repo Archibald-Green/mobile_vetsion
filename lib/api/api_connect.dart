@@ -12,10 +12,10 @@ final _refreshEndpoint = "/api/token/refresh/";
 final _signUpEndpoint = "/api/register/";
 
 final _booksEndpoint = "/api/api/book_view/";
-final _bookIdEndpoint = "/api/api/book_view/<int:pk>";
+final _bookIdEndpoint = "/api/api/book_view/";
 
 final _bookPagesEndpoint = "/api/api/book_page_view/";
-final _bookPageIdEndpoint = "api/api/book_page_view/<int:pk>";
+final _bookPageIdEndpoint = "api/api/book_page_view/";
 
 final _itemsEdpoint = "/api/api/item_view/";
 final _itemIdEdpoint = "/api/api/item_view/<int:pk>";
@@ -132,14 +132,14 @@ Future<List<dynamic>> booksListApi() async {
 
 
 
-Future<List<dynamic>> bookListApi(int page) async {
+Future<List<dynamic>> bookListApi(int bookID) async {
   var token = await SecureStorage().getToken();
-  print ('asssssssssssssssssssssssssssssssss');
   if (token != null) {
     token = 'Bearer ${token}';
   }
+  List<dynamic> result = [];
   http.Response response = await http.get(
-    Uri.parse(_book),
+    Uri.parse(_base + _bookPagesEndpoint + bookID.toString()),
     headers: <String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
       'Authorization': '${token}',
@@ -148,11 +148,12 @@ Future<List<dynamic>> bookListApi(int page) async {
   if (response.statusCode == 401) {
     refreshToken();
     await Future.delayed(const Duration(seconds: 1));
-    return bookListApi(page);
+    return bookListApi(bookID);
   }
-  List<dynamic> result = json.decode(utf8.decode(response.bodyBytes));
-  print('__________________________________________________');
-  print(result);
+  else if (response.statusCode == 200) {
+    result = json.decode(utf8.decode(response.bodyBytes));
+  }
+
   return result;
 }
 

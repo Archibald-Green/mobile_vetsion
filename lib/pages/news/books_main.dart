@@ -92,9 +92,7 @@ class _BooksPageState extends State<BooksLists> {
                     Container(
                       margin: EdgeInsets.only(top: 10),
                       child: OutlinedButton(
-                      onPressed: () => {  Navigator.push(context, MaterialPageRoute(builder: (context) => NewPage())),
-                      print('_____________________________________________________________________-'),
-                      print(itemNews.id),
+                      onPressed: () => {  Navigator.push(context, MaterialPageRoute(builder: (context) => NewPage(bookID: itemNews.id))),
                     },
                     child: Text('Подробнее', style: TextStyle(color: Colors.black),),
                   ),

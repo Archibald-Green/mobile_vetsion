@@ -1,29 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:mobileapp/controllers/home_controller.dart';
+import 'package:mobileapp/models/bookpage.dart';
 import 'package:mobileapp/pages/MainDrawer.dart';
 import 'package:mobileapp/pages/auth/login.dart';
 import 'package:mobileapp/services/storage.dart';
 
 class NewPage extends StatefulWidget {
-  int page;
-  NewPage({required this.page});
+  final int bookID;
+  NewPage({required this.bookID});
 
   final HomeController _homeController = HomeController();
   @override
-  _NewPageState createState() => _NewPageState(page: page);
+  _NewPageState createState() => _NewPageState(bookID: bookID);
 }
 
 class _NewPageState extends State<NewPage> {
-  int page;
-  _NewPageState({required this.page});
+  int bookID;
+  _NewPageState({required this.bookID});
 
-  dynamic _listpage;
+  late BookPage _listpage;
 
   @override
   void initState() {
     super.initState();
     UsernameUpdate();
-    widget._homeController.getPage(page).then((listpage) {
+    widget._homeController.getPage(bookID).then((listpage) {
       setState(() {
         _listpage = listpage;
       });
@@ -86,8 +87,14 @@ class _NewPageState extends State<NewPage> {
             color: Colors.cyan[100],
             child: Column(
               children: [
+                Image.network(
+                  _listpage.coverart,
+                  width: 200,
+                  height: 200,
+                ),
                 Text(_listpage.title, style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),),
-                Text(_listpage.title, style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),),
+                Text(_listpage.body, style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),),
+                Text('Вы видите:' + _listpage.items.map((item) => item.name).join(', '), style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),),
               ],
               ),
           )
