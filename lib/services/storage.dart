@@ -30,4 +30,3 @@ class SecureStorage {
     storage.deleteAll();
   }
 }
-

@@ -9,7 +9,7 @@ class BookPage {
   String body;
   String coverart;
  
-  List<Item> items ;
+  List<Item> items;
   
 
   BookPage({
@@ -21,7 +21,7 @@ class BookPage {
     required this.items,
   });
 
-  factory BookPage.fromJson(Map<String, dynamic> json) {
+  factory BookPage.fromJson(json) {
     Books book = Books.fromJson(json['book']);
 
     List<Item> items = [];
@@ -33,15 +33,14 @@ class BookPage {
     },);
 
     return BookPage(
-    
       id: json['id'] ?? 0,
-      book: book,
+      book: book ,
       title: json['title'] ?? '',
       body: json['body'] ?? '',
-      coverart: json['cover_art'] ?? '',
+      coverart: 'http://192.168.196.73:8000' + json['cover_art'] ?? '',
       items: items,
-     
     );
   }
+  
 }
 

@@ -9,6 +9,8 @@ import 'package:mobileapp/models/progress.dart';
 import 'package:mobileapp/services/status_code.dart';
 import 'package:mobileapp/services/storage.dart';
 
+import '../models/book_page_page_links.dart';
+
 class HomeController {
 
   Future<UserLoginStatusCode> loginUser(String username, String password) async {
@@ -59,11 +61,11 @@ class HomeController {
   //   return report;
   // }
 
-  Future<Books> getBook(int page) async{
-    dynamic result = await bookListApi(page);
-    Books book = Books.fromJson(result);
-    return book;
-  }
+  // Future<Books> getBook(int page) async{
+  //   dynamic result = await bookListApi(page);
+  //   Books book = Books.fromJson(result);
+  //   return book;
+  // }
 
   Future<List<Books>> getBooks() async{
     List<Books> allBooks = [];
@@ -79,31 +81,35 @@ class HomeController {
   }
 
 
-  Future<BookPage> getPage(int bookID) async{
-    List<dynamic> result = await bookListApi(bookID);
-    print("QQQQQQQQQQQQQQQQQQQQQQQQQ:   ${result}");
-    List<BookPage> pages = [];
-    result.forEach((element) {
-      BookPage page = BookPage.fromJson(element);
-      pages.add(page);
-    });
+  // Future<PageLinks> getPage(int bookID) async{
+  //   Map<String, dynamic> result = await bookListApi(bookID);
+  //   print("QQQQQQQQQQQQQQQQQQQQQQQQQ:   ${result}");
+  //   PageLinks pageLinks = PageLinks(id: result['id'], name: result['name'], idfrompage: result['from_page'], idtopage: result['to_page'], items: result['items']);
     
-    return pages.first;
-  }
+  //   // result.forEach((element) {
+  //   //   BookPage page = BookPage.fromJson(element);
+  //   //   // element['from_page']['book']['id']
+  //   //   pages.add(page);
+  //   // });
+    
+  //   return pageLinks;
+  // }
 
-  Future<List<BookPage>> getPages() async{
-  List<BookPage> allPage = [];
-  try {
-    List<dynamic> result = await pagesListApi();
-    result.forEach((element) {
-      allPage.add(BookPage.fromJson(element));
-    });
-  } catch (e) {
-    print("Error while fetching pages: $e");
-    // handle the error, such as displaying a message to the user
-  }
-  return allPage;
-}
+  
+
+//   Future<List<BookPage>> getPages() async{
+//   List<BookPage> allPage = [];
+//   try {
+//     List<dynamic> result = await pagesListApi();
+//     result.forEach((element) {
+//       allPage.add(BookPage.fromJson(element));
+//     });
+//   } catch (e) {
+//     print("Error while fetching pages: $e");
+//     // handle the error, such as displaying a message to the user
+//   }
+//   return allPage;
+// }
 
   
 
@@ -114,34 +120,50 @@ class HomeController {
   // }
 
   
-  Future<Item> getItem(int page) async{
-    dynamic result = await bookListApi(page);
-    Item itemId = Item.fromJson(result);
-    return itemId;
-  }
+  // Future<Item> getItem(int page) async{
+  //   dynamic result = await bookListApi(page);
+  //   Item itemId = Item.fromJson(result);
+  //   return itemId;
+  // }
 
-  Future<List<Item>> getItems() async{
-    List<Item> allItems = [];
-    dynamic result = await itemsListApi();
-    print('cccccccccccccccccccccccccccccccccccccccccccccccccc');
-    print(result);
-    result.forEach((element) {
-      allItems.add(Item.fromJson(element));
-    });
-    return allItems;
-  }
+  // Future<List<Item>> getItems() async{
+  //   List<Item> allItems = [];
+  //   dynamic result = await itemsListApi();
+  //   print('cccccccccccccccccccccccccccccccccccccccccccccccccc');
+  //   print(result);
+  //   result.forEach((element) {
+  //     allItems.add(Item.fromJson(element));
+  //   });
+  //   return allItems;
+  // }
 
   
 
- Future<PageLinks> getPageLink(int page) async{
-    dynamic result = await bookListApi(page);
-    PageLinks linkId = PageLinks.fromJson(result);
-    return linkId;
+ Future<PageLinks> getPageLink(int bookID, int linkpageID) async{
+    List<dynamic> result = await linkListApi(bookID, linkpageID);
+    List<PageLinks> pageslink = [];
+    result.forEach((element) {
+      print("FFFF:     ${element}");
+      PageLinks page = PageLinks.fromJson(element);
+      pageslink.add(page);
+      element['from_page']['id'];
+    });
+    print('zdec vasha reklama ${pageslink}');
+    return pageslink.first;
   }
+
+
+//  Future<PageLinks> getPageIDLink(int bookID, int linkpageID) async{
+//     Object result = await linkIDListApi(bookID, linkpageID);
+
+//     print('sdasdadsadasdadama ${pageslink}');
+//     return pageslink.first;
+// }
+
 
   Future<List<PageLinks>> getPageLinks() async{
     List<PageLinks> allPageLink = [];
-    List<dynamic> result = await linkListApi();
+    List<dynamic> result = await linksListApi();
     print('ddddddddddddddddddddddddddddddddddddddddddddd');
     print(result);
     result.forEach((element) {
@@ -151,23 +173,31 @@ class HomeController {
   }
 
 
-  Future<Progress> getProgress(int page) async{
-      dynamic result = await bookListApi(page);
-      Progress progressId = Progress.fromJson(result);
-      return progressId;
-    }
+  // Future<Progress> getProgress(int page) async{
+  //     dynamic result = await bookListApi(page);
+  //     Progress progressId = Progress.fromJson(result);
+  //     return progressId;
+  //   }
 
-   Future<List<Progress>> getProgresses() async{
-    List<Progress> allProgress = [];
-    List<dynamic> result = await progressListApi();
-    print('fffffffffffffffffffffffffffffffffffffffffffffffffffff');
-    print(result);
-    result.forEach((element) {
-      allProgress.add(Progress.fromJson(element));
-    });
-    return allProgress;
+  //  Future<List<Progress>> getProgresses() async{
+  //   List<Progress> allProgress = [];
+  //   List<dynamic> result = await progressListApi();
+  //   print('fffffffffffffffffffffffffffffffffffffffffffffffffffff');
+  //   print(result);
+  //   result.forEach((element) {
+  //     allProgress.add(Progress.fromJson(element));
+  //   });
+  //   return allProgress;
+  // }
+
+  Future<BookPagePageLinks> getBookPagePageLinks(int bookID) async{
+    Map<String, dynamic> result = await bookPageLinkListApi(bookID);
+    print("QQQQQQQQQQQQQQQQQQQQQQQQQ:   ${result}");
+
+    BookPagePageLinks bookPagePageLinks = BookPagePageLinks.fromJson(result);
+    return bookPagePageLinks;
+    
   }
-
 
 }
 

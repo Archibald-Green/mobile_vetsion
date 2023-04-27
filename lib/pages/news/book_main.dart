@@ -4,9 +4,15 @@ import 'package:mobileapp/models/bookpage.dart';
 import 'package:mobileapp/pages/MainDrawer.dart';
 import 'package:mobileapp/pages/auth/login.dart';
 import 'package:mobileapp/services/storage.dart';
+import 'package:tuple/tuple.dart';
+import '../../models/book_page_page_links.dart';
+import '../../models/pagelinks.dart';
 
 class NewPage extends StatefulWidget {
   final int bookID;
+
+
+  
   NewPage({required this.bookID});
 
   final HomeController _homeController = HomeController();
@@ -15,25 +21,32 @@ class NewPage extends StatefulWidget {
 }
 
 class _NewPageState extends State<NewPage> {
-  int bookID;
-  _NewPageState({required this.bookID});
 
-  late BookPage _listpage;
+  int bookID;
+  late int linkpageID;
+  late int fromID;
+
+  _NewPageState({required this.bookID}) {
+    linkpageID = 0; // or any other default value
+  }
+
+  late PageLinks _listpage;
+  late PageLinks _pageLinks;
+  late PageLinks _pageIDLinks;
+
+  late BookPagePageLinks _bookPagePageLinks;
 
   @override
   void initState() {
     super.initState();
     UsernameUpdate();
-    widget._homeController.getPage(bookID).then((listpage) {
-      setState(() {
-        _listpage = listpage;
-      });
-    });
   }
+
 
   final SecureStorage storage = SecureStorage();
   String buttonText = '';
   String? _username = '';
+  List<ElevatedButton> pageButtons = [];
 
   Future<String?> getUsername() async {
     _username = await storage.getUsername();
@@ -53,52 +66,87 @@ class _NewPageState extends State<NewPage> {
       });
     });
   }
+  
+  void updatePageLink(int newLinkPageID) {
+    setState(() {
+      widget._homeController.getPageLink(bookID, newLinkPageID).then((listpagelink) {
+        _pageLinks = [listpagelink] as PageLinks;
+      });
+    });
+  }
+
+  Future<BookPagePageLinks> getPageData() async {
+    
+    _bookPagePageLinks = await widget._homeController.getBookPagePageLinks(bookID);
+    // print ('lolololololo $bookPagePageLinks');
+    // setState(() {
+    //   _bookPagePageLinks = bookPagePageLinks;
+    // });
+
+    _bookPagePageLinks.pageLinks.forEach((element) {
+      pageButtons.add(ElevatedButton(
+        onPressed: () {
+          print("WWWWWWWWWWWWWWWWWWWWWWWWWWW");
+          updatePageLink(element.id);
+        },
+        child: Text(element.name.split(',').map((name) => name.trim()).join(', ')),
+      ));
+    },);
+
+    return _bookPagePageLinks;
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.lightBlue,
-        title: const Text('ЖКХ услуги'),
-        actions: <Widget>[
-          TextButton(
-              onPressed: () {
-                if (buttonText == '(${_username})Выход') {
-                  storage.deleteData();
-                  setState(() {
-                    buttonText = 'Вход';
-                  });
-                }
-                else {
-                  Navigator.push(
-                        context, MaterialPageRoute(builder: (_) => Login()));
-                }
-              },
-              child: Text(buttonText))
-        ],
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.refresh),
+        onPressed: () {
+          setState(() {});
+        },
       ),
-      drawer: Drawer(
-        child: MainDrawer(),
-      ),
-      body: SingleChildScrollView (
-        child: Container(
-            margin: EdgeInsets.all(10),
-            padding: EdgeInsets.all(10),
-            color: Colors.cyan[100],
-            child: Column(
-              children: [
-                Image.network(
-                  _listpage.coverart,
-                  width: 200,
-                  height: 200,
+      appBar: AppBar(title: const Text("Future Builder Example")),
+      body: FutureBuilder(
+        future: getPageData(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          if (snapshot.hasData) {
+            return SingleChildScrollView(
+              child: Container(
+                child: SingleChildScrollView (
+                  child: Container(
+                    margin: EdgeInsets.all(10),
+                    padding: EdgeInsets.all(10),
+                    color: Colors.cyan[100],
+                    child: Column(
+                      children: [
+                        Image.network(
+                          snapshot.data!.bookPage.coverart,
+                          width: 200,
+                          height: 200,
+                        ),
+                        Text(snapshot.data!.bookPage.body, style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),),
+                        // Text(snapshot.data!.body, style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),),
+                        Text('Вы видите:' + snapshot.data!.bookPage.items.map((item) => item.name).join(', '), style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),),
+                        Column (
+                          children: pageButtons,
+                        )
+                      ],
+                    ),
+                  ),
                 ),
-                Text(_listpage.title, style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),),
-                Text(_listpage.body, style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),),
-                Text('Вы видите:' + _listpage.items.map((item) => item.name).join(', '), style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),),
-              ],
               ),
-          )
-        )
+            );
+          } else {
+            return Text("Error: ${snapshot.error}");
+          }
+        },
+      ),
     );
   }
 }
+

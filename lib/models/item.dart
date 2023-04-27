@@ -3,9 +3,9 @@ class Item {
   String name;
   Item({required this.id, required this.name,});
 
-  factory Item.fromJson(Map<String, dynamic> json) {
+  factory Item.fromJson( json) {
     return Item(
-        id: json['id'],
-        name: json['name'],);
+        id: json['id'] as int,
+        name: json['name'] as String );
   }
 }

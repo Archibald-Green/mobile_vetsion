@@ -6,7 +6,7 @@ import 'package:mobileapp/services/status_code.dart';
 import 'package:mobileapp/services/storage.dart';
 import 'api_models.dart';
 
-final _base = "http://192.168.1.207:8000";
+final _base = "http://192.168.196.73:8000";
 final _signInURL = "/api/token/";
 final _refreshEndpoint = "/api/token/refresh/";
 final _signUpEndpoint = "/api/register/";
@@ -22,7 +22,7 @@ final _itemIdEdpoint = "/api/api/item_view/<int:pk>";
 
 
 final _pageLinksEndpoint = "/api/api/page_link_view/";
-final _pageLinkIdEndpoint = "/api/api/page_link_view/<int:pk>";
+final _pageLinkIdEndpoint = "/api/api/page_link_view/";
 
 final _progressesEdpoint = "/api/api/bool_progress_view/";
 final _progressIdEdpoint = "/api/api/bool_progress_view/<int:pk>";
@@ -91,7 +91,6 @@ Future<Map> loginApi(UserLogin userLogin) async {
 
 
 
-
 Future<List> registrationApi(UserRegistration userRegistration) async {
   final http.Response response = await http.post(
     Uri.parse(_registration),
@@ -107,6 +106,7 @@ Future<List> registrationApi(UserRegistration userRegistration) async {
 
 Future<List<dynamic>> booksListApi() async {
   var token = await SecureStorage().getToken();
+
   print(token);
   print('bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb');
   if (token != null) {
@@ -132,30 +132,30 @@ Future<List<dynamic>> booksListApi() async {
 
 
 
-Future<List<dynamic>> bookListApi(int bookID) async {
-  var token = await SecureStorage().getToken();
-  if (token != null) {
-    token = 'Bearer ${token}';
-  }
-  List<dynamic> result = [];
-  http.Response response = await http.get(
-    Uri.parse(_base + _bookPagesEndpoint + bookID.toString()),
-    headers: <String, String>{
-      'Content-Type': 'application/json; charset=UTF-8',
-      'Authorization': '${token}',
-    },
-  );
-  if (response.statusCode == 401) {
-    refreshToken();
-    await Future.delayed(const Duration(seconds: 1));
-    return bookListApi(bookID);
-  }
-  else if (response.statusCode == 200) {
-    result = json.decode(utf8.decode(response.bodyBytes));
-  }
+// Future<Map<String, dynamic>> bookListApi(int bookID) async {
+//   var token = await SecureStorage().getToken();
+//   if (token != null) {
+//     token = 'Bearer ${token}';
+//   }
+//   Map<String, dynamic> result = [];
+//   http.Response response = await http.get(
+//     Uri.parse(_base + _bookPagesEndpoint + bookID.toString()),
+//     headers: <String, String>{
+//       'Content-Type': 'application/json; charset=UTF-8',
+//       'Authorization': '${token}',
+//     },
+//   );
+//   if (response.statusCode == 401) {
+//     refreshToken();
+//     await Future.delayed(const Duration(seconds: 1));
+//     return bookListApi(bookID);
+//   }
+//   else if (response.statusCode == 200) {
+//     result = json.decode(utf8.decode(response.bodyBytes));
+//   }
 
-  return result;
-}
+//   return result;
+// }
 
 
 
@@ -178,7 +178,7 @@ Future<List<dynamic>> pagesListApi() async {
     return pagesListApi();
   }
   List<dynamic> result = json.decode(utf8.decode(response.bodyBytes));
-  print(result);
+  print(_pages);
   print ('ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc');
   return result;
 }
@@ -286,13 +286,13 @@ Future<List<dynamic>> linksListApi() async {
 
 
 
-Future<List<dynamic>> linkListApi() async {
+Future<List<dynamic>> linkListApi(int bookID, int linkpageID) async {
   var token = await SecureStorage().getToken();
   if (token != null) {
     token = 'Bearer ${token}';
   }
   http.Response response = await http.get(
-    Uri.parse(_link),
+    Uri.parse(_link + bookID.toString() + "/" + (linkpageID + 1).toString() + "/" + (linkpageID + 1).toString() ),
     headers: <String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
       'Authorization': '${token}',
@@ -301,10 +301,35 @@ Future<List<dynamic>> linkListApi() async {
   if (response.statusCode == 401) {
     refreshToken();
     await Future.delayed(const Duration(seconds: 1));
-    return linkListApi();
+    return linkListApi( bookID, linkpageID);
   }
   List<dynamic> result = json.decode(utf8.decode(response.bodyBytes));
-  print(result);
+  print('vvvvvvvvvvvvvvvvvvvvvvoooooooooooottttttt ${_link  + (linkpageID + 1).toString()}');
+  print("Прилетай сюда давай давай $result");
+  return result;
+}
+
+Future<Object> linkIDListApi(int bookID, int linkpageID) async {
+  var token = await SecureStorage().getToken();
+  if (token != null) {
+    token = 'Bearer ${token}';
+  }
+  http.Response response = await http.get(
+    Uri.parse(_link + bookID.toString() + "/" + (linkpageID + 1).toString() + "/" + (linkpageID + 1).toString() ),
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+      'Authorization': '${token}',
+    },
+  );
+  if (response.statusCode == 401) {
+    refreshToken();
+    await Future.delayed(const Duration(seconds: 1));
+    return linkListApi( bookID, linkpageID);
+  }
+
+  Map<String,dynamic> result = json.decode(utf8.decode(response.bodyBytes));
+  print('vvvvvvvvvvvvvvvvvvvvvvoooooooooooottttttt ${_link  + (linkpageID + 1).toString()}');
+  print("Прилетай сюда давай давай $result");
   return result;
 }
 
@@ -354,3 +379,29 @@ Future<List<dynamic>> progressListApi() async {
   print(result);
   return result;
 }
+
+Future<Map<String, dynamic>> bookPageLinkListApi(int bookID) async {
+  var token = await SecureStorage().getToken();
+  if (token != null) {
+    token = 'Bearer ${token}';
+  }
+  Map<String, dynamic> result = {};
+  http.Response response = await http.get(
+    Uri.parse(_base + _bookPagesEndpoint + bookID.toString()),
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+      'Authorization': '${token}',
+    },
+  );
+  if (response.statusCode == 401) {
+    refreshToken();
+    await Future.delayed(const Duration(seconds: 1));
+    return bookPageLinkListApi(bookID);
+  }
+  else if (response.statusCode == 200) {
+    result = json.decode(utf8.decode(response.bodyBytes));
+  }
+
+  return result;
+}
+

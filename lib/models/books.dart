@@ -9,11 +9,11 @@ class Books {
     required this.firstPage,
   });
 
-  factory Books.fromJson(Map<String, dynamic> json) {
+  factory Books.fromJson(json) {
     return Books(
-      id: json['id'],
-      title: json['title'],
-      firstPage: json['first_page']
+      id: json['id']  as int,
+      title: json['title'] as String,
+      firstPage: json['first_page'] as int
     );
   }
 }

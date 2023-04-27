@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:mobileapp/controllers/home_controller.dart';
 import 'package:mobileapp/models/books.dart';
+import 'package:mobileapp/models/pagelinks.dart';
 import 'package:mobileapp/pages/MainDrawer.dart';
 import 'package:mobileapp/pages/auth/login.dart';
 import 'package:mobileapp/pages/news/book_main.dart';
 import 'package:mobileapp/services/storage.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../models/bookpage.dart';
+
 class BooksLists extends StatefulWidget {
+  
   final HomeController _homeController = HomeController();
+  
   @override
   _BooksPageState createState() => _BooksPageState();
 
@@ -16,7 +21,13 @@ class BooksLists extends StatefulWidget {
 }
 
 class _BooksPageState extends State<BooksLists> {
+
+
+  // late int bookID;
+
   List<Books> _listBooks = [];
+
+  
 
   @override
   void initState() {
@@ -27,6 +38,16 @@ class _BooksPageState extends State<BooksLists> {
         _listBooks = listNews;
       });
     });
+
+    // super.initState();
+    // UsernameUpdate();
+    // widget._homeController.getPage(bookID).then((list) {
+    //   setState(() {
+    //     _list = [list] ;
+    //   });
+    // });
+    
+  
   }
 
   final SecureStorage storage = SecureStorage();
@@ -81,7 +102,9 @@ class _BooksPageState extends State<BooksLists> {
       body: ListView.builder(
         itemCount: _listBooks.length,
         itemBuilder: (context, index) {
+      
           final itemNews = _listBooks[_listBooks.length-index-1];
+          
           return Container(
             margin: EdgeInsets.all(10),
             padding: EdgeInsets.all(10),
@@ -92,7 +115,7 @@ class _BooksPageState extends State<BooksLists> {
                     Container(
                       margin: EdgeInsets.only(top: 10),
                       child: OutlinedButton(
-                      onPressed: () => {  Navigator.push(context, MaterialPageRoute(builder: (context) => NewPage(bookID: itemNews.id))),
+                      onPressed: () => {  Navigator.push(context, MaterialPageRoute(builder: (context) => NewPage(bookID: itemNews.id ))),
                     },
                     child: Text('Подробнее', style: TextStyle(color: Colors.black),),
                   ),

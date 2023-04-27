@@ -1,30 +1,24 @@
+import 'bookpage.dart';
 import 'item.dart';
 
 class PageLinks {
   int id;
   String name;
-  int idfrompage;
-  int idtopage;
-  List<Item> items ;
+  BookPage idfrompage;
+  BookPage idtopage;
 
-  PageLinks({required this.id, required this.name, required this.idfrompage, required this.idtopage,required this.items, });
+  PageLinks({required this.id, required this.name, required this.idfrompage, required this.idtopage });
 
-  factory PageLinks.fromJson(Map<String, dynamic> json) {
+  factory PageLinks.fromJson( json) {
 
-     List<Item> items = [];
-
-    List<dynamic> itemsJson = json['items'];
-    itemsJson.forEach((element) {
-      Item item = Item.fromJson(element);
-      items.add(item);
-    },);
+    BookPage idfrompage = BookPage.fromJson(json['from_page']);
+    BookPage idtopage = BookPage.fromJson(json['to_page']);
 
     return PageLinks(
-        id: json['id'],
-        name: json['name'],
-        idfrompage: json['idfrompage'],
-        idtopage: json['idtopage'],
-        items: items,
+        id: json['id'] ?? 0,
+        name: json['name'] ?? '',
+        idfrompage: idfrompage,
+        idtopage: idtopage,
     );
   }
 }
